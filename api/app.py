@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 @app.route('/', )
 def index():
+    print("made it here")
     return "Hello, World!"
 
 
@@ -43,6 +44,7 @@ def get_calendar_events():
         ).execute()
         
         events = events_result.get('items', [])
+        
         
         formatted_events = []
         for event in events:
