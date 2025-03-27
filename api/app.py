@@ -7,6 +7,11 @@ from googleapiclient.discovery import build
 
 app = Flask(__name__)
 
+@app.route('/', )
+def index():
+    return "Hello, World!"
+
+
 @app.route('/api/calendar-events', methods=['GET'])
 def get_calendar_events():
     try:
