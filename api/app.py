@@ -51,14 +51,22 @@ def get_calendar_events():
         
         formatted_events = []
         for event in events:
+            full_data_start = event['start'].get('dateTime', event['start'].get('date'))
+            start = full_data_start[0:10]
+            time = "All Day"
+            if len(full_data_start) > 10:
+                time = full_data_start[11:16]
+    
+            
             formatted_events.append({
-                'start': event['start'].get('dateTime', event['start'].get('date')),
+                'start': start,
+                'time': time,
                 'end': event['end'].get('dateTime', event['end'].get('date')),
                 'title': event.get('summary', 'No Title'),
                 'description': event.get('description', 'No Description'),
                 'location': event.get('location', 'TBD')
             })
-        
+        print(formatted_events)
         return jsonify({"events": formatted_events})
     
     except Exception as e:
