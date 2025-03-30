@@ -2,10 +2,13 @@ import datetime
 import os
 import json
 from flask import Flask, jsonify
+from flask_cors import CORS
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 app = Flask(__name__)
+
+CORS(app) 
 
 @app.route('/', )
 def index():
