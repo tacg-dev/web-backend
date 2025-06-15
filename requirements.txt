@@ -2,3 +2,5 @@ flask==3.0.3
 google-auth==2.38.0
 google-api-python-client==2.166.0
 flask-cors
+google-auth-httplib2
+google-auth-oauthlib
