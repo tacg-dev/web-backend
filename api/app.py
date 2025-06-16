@@ -122,7 +122,7 @@ def get_sheet_data():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('api/active-member/headshot/<file_id>', methods=['GET'])
+@app.route('/api/active-member/headshot/<file_id>', methods=['GET'])
 def get_active_member_headshot(file_id):
     try:
         SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
@@ -158,9 +158,6 @@ def get_active_member_headshot(file_id):
                 'Access-Control-Allow-Origin': '*'
             }
         )
-
-        return jsonify({"message": "Headshot retrieved successfully", "image_data": image_data.getvalue().decode('utf-8')})
-
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
