@@ -1,10 +1,12 @@
 import datetime
 import os
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
 from flask_cors import CORS
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+import io
 
 app = Flask(__name__)
 
@@ -119,6 +121,49 @@ def get_sheet_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('api/active-member/headshot/<file_id>', methods=['GET'])
+def get_active_member_headshot(file_id):
+    try:
+        SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+
+        # Similar credential handling as FastAPI example
+        key_info = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
+        if not key_info:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            key_path = os.path.join(os.path.dirname(script_dir), 'service_account_key.json')
+            creds = service_account.Credentials.from_service_account_file(
+                key_path, scopes=SCOPES
+            )
+        else:
+            key_dict = json.loads(key_info)
+            creds = service_account.Credentials.from_service_account_info(
+                key_dict, scopes=SCOPES
+            )
+
+        service = build('drive', 'v3', credentials=creds)
+
+        request = service.files().get_media(fileId=file_id)
+        image_data = io.BytesIO()
+        downloader = MediaIoBaseDownload(image_data, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+
+        return Response(
+            image_data.getvalue(),
+            headers={
+                'Content-Type': 'image/jpeg',
+                'Cache-Control': 'public, max-age=3600',
+                'Access-Control-Allow-Origin': '*'
+            }
+        )
+
+        return jsonify({"message": "Headshot retrieved successfully", "image_data": image_data.getvalue().decode('utf-8')})
+
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # For local development
