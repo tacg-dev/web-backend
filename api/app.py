@@ -73,6 +73,21 @@ def get_calendar_events():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+
+def build_links(link_str: str):
+    try:
+        link_str = link_str.splitlines()
+        links = [link.split(",") for link in link_str]
+        d = {k.strip() : v.strip() for k,v in links}
+        return d
+    except Exception as e:
+        print(e)
+        return ""
+
+
+
 
 @app.route('/api/sheet-data', methods=['GET'])
 def get_sheet_data():
@@ -112,13 +127,21 @@ def get_sheet_data():
         headers = values[0]
         data = []
         for row in values[1:]:  # Skip header row
-            padded_row = row + [''] * (len(headers) - len(row))
-            row_dict = dict(zip(headers, padded_row))
+            print(row)
+            if not row:
+                continue
+            
+            if len(row) >= 14:
+                row[13] = build_links(row[13])
+            
+            row_dict = dict(zip(headers, row))
             data.append(row_dict)
 
         return jsonify({"data": data})
 
     except Exception as e:
+        print(e)
+        
         return jsonify({"error": str(e)}), 500
 
 
@@ -142,6 +165,11 @@ def get_active_member_headshot(file_id):
             )
 
         service = build('drive', 'v3', credentials=creds)
+
+        file_metadata = service.files().get(fileId=file_id).execute()
+        print(f"File name: {file_metadata.get('name')}")
+        print(f"File MIME type: {file_metadata.get('mimeType')}")
+        print(f"File size: {file_metadata.get('size', 'N/A')}")
 
         request = service.files().get_media(fileId=file_id)
         image_data = io.BytesIO()
