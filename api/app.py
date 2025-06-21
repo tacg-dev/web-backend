@@ -146,7 +146,7 @@ def get_sheet_data():
 
 
 @app.route('/api/active-leader-data', methods=['GET'])
-def get_sheet_data():
+def get_leader_data():
     try:
         SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
