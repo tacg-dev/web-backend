@@ -133,13 +133,14 @@ def get_sheet_data():
             
             if len(row) >= 14:
                 row[13] = build_links(row[13])
+
             
-            if row[13] == False:
-                row.pop(13)
-                headers.pop(13)
-                row_dict = dict(zip(headers, row))
-            else:
-                row_dict = dict(zip(headers, row))
+                if row[13] == False:
+                    row.pop(13)
+                    headers.pop(13)
+            
+            row_dict = dict(zip(headers, row))
+                
             
             data.append(row_dict)
 
@@ -196,11 +197,12 @@ def get_leader_data():
             if len(row) >= 15:
                 row[14] = build_links(row[14])
             
-            if row[14] == False:
-                row.pop(14)
-                row_dict = dict(zip(headers, row))
-            else:                        
-                row_dict = dict(zip(headers, row))
+                if row[14] == False:
+                    row.pop(14)
+                    headers.pop(14)
+                    
+            row_dict = dict(zip(headers, row))
+           
             
             data.append(row_dict)
 
