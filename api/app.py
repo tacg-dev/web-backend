@@ -187,7 +187,7 @@ def get_leader_data():
             if not row:
                 continue
             
-            if len(row) >= 14:
+            if len(row) >= 15:
                 row[14] = build_links(row[14])
             
             row_dict = dict(zip(headers, row))
