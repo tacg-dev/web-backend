@@ -188,7 +188,7 @@ def get_leader_data():
                 continue
             
             if len(row) >= 14:
-                row[13] = build_links(row[14])
+                row[14] = build_links(row[14])
             
             row_dict = dict(zip(headers, row))
             data.append(row_dict)
