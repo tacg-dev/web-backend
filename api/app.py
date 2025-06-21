@@ -145,6 +145,61 @@ def get_sheet_data():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/active-leader-data', methods=['GET'])
+def get_sheet_data():
+    try:
+        SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+
+        # Similar credential handling as FastAPI example
+        key_info = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
+        if not key_info:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            key_path = os.path.join(os.path.dirname(script_dir), 'service_account_key.json')
+            creds = service_account.Credentials.from_service_account_file(
+                key_path, scopes=SCOPES
+            )
+        else:
+            key_dict = json.loads(key_info)
+            creds = service_account.Credentials.from_service_account_info(
+                key_dict, scopes=SCOPES
+            )
+
+        service = build("sheets", "v4", credentials=creds)
+
+        SPREADSHEET_ID = "1kJtkbQVgIGl0YrCI0g6-w_lLYH0AZOjeIyUIMdPZa54"
+        RANGE_NAME = "Form Responses 1"
+
+        sheet = service.spreadsheets()
+        result = sheet.values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range=RANGE_NAME
+        ).execute()
+
+        values = result.get('values', [])
+
+        if not values:
+            return jsonify({'error': 'No data found.'}), 404
+
+        headers = values[0]
+        data = []
+        for row in values[1:]:  # Skip header row
+            print(row)
+            if not row:
+                continue
+            
+            if len(row) >= 14:
+                row[13] = build_links(row[14])
+            
+            row_dict = dict(zip(headers, row))
+            data.append(row_dict)
+
+        return jsonify({"data": data})
+
+    except Exception as e:
+        print(e)
+        
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/active-member/headshot/<file_id>', methods=['GET'])
 def get_active_member_headshot(file_id):
     try:
