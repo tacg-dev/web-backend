@@ -84,7 +84,7 @@ def build_links(link_str: str):
         return d
     except Exception as e:
         print(e)
-        return ""
+        return False
 
 
 
@@ -134,7 +134,13 @@ def get_sheet_data():
             if len(row) >= 14:
                 row[13] = build_links(row[13])
             
-            row_dict = dict(zip(headers, row))
+            if row[13] == False:
+                row.pop(13)
+                headers.pop(13)
+                row_dict = dict(zip(headers, row))
+            else:
+                row_dict = dict(zip(headers, row))
+            
             data.append(row_dict)
 
         return jsonify({"data": data})
@@ -190,7 +196,12 @@ def get_leader_data():
             if len(row) >= 15:
                 row[14] = build_links(row[14])
             
-            row_dict = dict(zip(headers, row))
+            if row[14] == False:
+                row.pop(14)
+                row_dict = dict(zip(headers, row))
+            else:                        
+                row_dict = dict(zip(headers, row))
+            
             data.append(row_dict)
 
         return jsonify({"data": data})
