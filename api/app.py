@@ -199,7 +199,7 @@ def get_leader_data():
             
                 if row[14] == False:
                     row.pop(14)
-                    headers.pop(14)
+                    # headers.pop(14)
                     
             row_dict = dict(zip(headers, row))
            
